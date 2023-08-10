@@ -29,28 +29,31 @@ newDay = 0
 
 while not newDay:
     print(nbPage)
-
+    # on charge la page souhaitee
     url = "https://www.kingmods.net/fr/fs22/nouveaux-mods?page=" + str(nbPage)
 
     browser.get(url)
 
-    titre = browser.find_elements(By.TAG_NAME, "a")
-
+    # on recupere toutes les donnees a partir des lignes html
     linked = browser.find_elements(By.TAG_NAME, "a")
 
     dates = browser.find_elements(By.TAG_NAME, "time")
 
+    # Une oage contient 12 mods
     for iteration in range(len(dates)):
         date = dates[iteration]
-        links = linked[58 + iteration]
+        links = linked[58 + iteration] # beaucoup de lignes permettant de naviguer sont presentes avant les mods
 
-        dateStr = date.get_attribute("datetime")
-        link = links.get_attribute("href")
-        titreMod = links.get_attribute("title")
+        dateStr = date.get_attribute("datetime") # date
+        link = links.get_attribute("href") # lien du mod
+        titreMod = links.get_attribute("title") # titre
 
-        dateDatetime = datetime.datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%SZ")
-        nowDateTime = datetime.date.today()
+        dateDatetime = datetime.datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%SZ") # utilisation de datetime pour
+        # comparer des dates
+        nowDateTime = datetime.date.today() # - timedelta(days=1)
+
         if dateDatetime.date() == nowDateTime:
+            # preparation pour csv
             dataToAdd = titreMod + ";" + link + ";\n"
             tableauToPrint += dataToAdd
         else:
