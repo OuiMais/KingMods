@@ -1,33 +1,63 @@
+"""
+    Projet : KingMods
+    Date Creation : 07/08/2023
+    Date Revision : 10/08/2023
+    Entreprise : 3SC4P3
+    Auteur: Florian HOFBAUER
+    Contact :
+    But : Obtenir un document comportant tous les liens et noms des derniers mods ajoutés sur KingMods dans le but de générer un bot
+"""
 
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
 import datetime
 # import csv
 # import time
 
 # Option for website (no screen open)
 options = Options()
-# options.add_argument('--headless')
+options.add_argument('--headless')
 
 # Initiate the browser
 browser = webdriver.Chrome(options=options)
 
-# Open the Website
-browser.get('https://www.kingmods.net/fr/fs22/nouveaux-mods')
+tableauToPrint = ""
+nbPage = 1
+newDay = 0
 
-titre = browser.find_elements(by=By.XPATH, value="//h2[@class='font-bold text-white truncate smd:text-16 _2xs:text-16 "
-                                                "my-5 text-20']")
+while not newDay:
+    print(nbPage)
 
-linked = browser.find_elements(By.TAG_NAME, "a")
+    url = "https://www.kingmods.net/fr/fs22/nouveaux-mods?page=" + str(nbPage)
 
-for links in linked:
-    link = links.get_attribute("href")
+    browser.get(url)
 
-date = browser.find_elements(By.TAG_NAME, "time")
+    titre = browser.find_elements(By.TAG_NAME, "a")
 
-for data in date:
-    dt = data.get_attribute("datetime")
+    linked = browser.find_elements(By.TAG_NAME, "a")
+
+    dates = browser.find_elements(By.TAG_NAME, "time")
+
+    for iteration in range(len(dates)):
+        date = dates[iteration]
+        links = linked[58 + iteration]
+
+        dateStr = date.get_attribute("datetime")
+        link = links.get_attribute("href")
+        titreMod = links.get_attribute("title")
+
+        dateDatetime = datetime.datetime.strptime(dateStr, "%Y-%m-%dT%H:%M:%SZ")
+        nowDateTime = datetime.date.today()
+        if dateDatetime.date() == nowDateTime:
+            dataToAdd = titreMod + ";" + link + ";\n"
+            tableauToPrint += dataToAdd
+        else:
+            newDay = 1
+
+    nbPage += 1
 
 browser.quit()
+
+print(tableauToPrint)
