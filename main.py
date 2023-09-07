@@ -51,8 +51,9 @@ while programmRun:
 
     browser.close()
     time.sleep(timeBetweenRefresh)
+    timeEndDay = time.time() % 86400
 
-    if keyboard.is_pressed("esc") or time.time() % 86400 == 0:
+    if keyboard.is_pressed("esc") or timeEndDay == 0:
         # si on interrompt le programme avec la touche échap, on arrête tout, sinon c'est qu'il est minuit donc on
         # fait un bilan de la journée
         programmRun = 0
@@ -62,7 +63,7 @@ while programmRun:
             et le lien de chaque mod
         """
 
-        if time.time() % 86400 == 0:
+        if timeEndDay == 0:
             time.sleep(1.0)
             tableauToPrint = ""
             nbPage = 1
