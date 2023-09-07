@@ -18,10 +18,7 @@ import time
 
 # Option for website (no screen open)
 options = Options()
-options.add_argument('--headless')
-
-# Initiate the browser
-browser = webdriver.Chrome(options=options)
+# options.add_argument('--headless')
 
 """ 
     Cette partie permet de savoir si un nouveau mod vient de sortir
@@ -29,18 +26,21 @@ browser = webdriver.Chrome(options=options)
 import keyboard
 
 previousTitle = ""
+url = "https://www.kingmods.net/fr/fs22/nouveaux-mods"
 timeBetweenRefresh = 10.0
 programmRun = 1
 
 while programmRun:
-    url = "https://www.kingmods.net/fr/fs22/nouveaux-mod"
+    # Initiate the browser
+    browser = webdriver.Chrome(options=options)
 
+    # Open website
     browser.get(url)
 
     # on recupere toutes les donnees a partir des lignes html
     linked = browser.find_elements(By.TAG_NAME, "a")
 
-    links = linked[58] # beaucoup de lignes permettant de naviguer sont presentes avant les mods
+    links = linked[58]  # beaucoup de lignes permettant de naviguer sont presentes avant les mods
 
     link = links.get_attribute("href") # lien du mod
     titreMod = links.get_attribute("title") # titre
@@ -49,10 +49,10 @@ while programmRun:
         print("We have a new mod on KingsMod : %s at the link %s" % (titreMod, link))
         previousTitle = titreMod
 
-    browser.quit()
+    browser.close()
     time.sleep(timeBetweenRefresh)
 
-    if keyboard.is_pressed("esc") or time.time() % 86400 != 0:
+    if keyboard.is_pressed("esc") or time.time() % 86400 == 0:
         # si on interrompt le programme avec la touche échap, on arrête tout, sinon c'est qu'il est minuit donc on
         # fait un bilan de la journée
         programmRun = 0
