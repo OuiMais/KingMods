@@ -1,7 +1,7 @@
 """
     Projet : KingMods
     Date Creation : 07/08/2023
-    Date Revision : /01/2025
+    Date Revision : 13/01/2025
     Entreprise : 3SC4P3
     Auteur: Florian HOFBAUER
     Contact :
@@ -34,7 +34,7 @@ def ModResumeWithLastModSave():
         excelSheetPrevious = excelPrevious.active
         previousNewTitle = excelSheetPrevious["A2"].value
         sheetNames = excelPrevious.sheetnames
-        excelSheetPrevious = excelPrevious.get_sheet_by_name(sheetNames[1])
+        excelSheetPrevious = excelPrevious[sheetNames[1]]
         previousUpdateTitle = excelSheetPrevious["A2"].value
         excelPrevious.close()
     else:
@@ -42,9 +42,9 @@ def ModResumeWithLastModSave():
         previousNewTitle = None
 
     if previousUpdateTitle is None:
-        previousUpdateTitle = "Pack d'outils pour pierres"
+        previousUpdateTitle = "Hangar à machines 55x74"
     if previousNewTitle is None:
-        previousNewTitle = "Pack d'outils pour pierres"
+        previousNewTitle = "Hangar à machines 55x74"
 
     url = "https://www.kingmods.net/fr/fs25/nouveaux-mods"
 
@@ -102,39 +102,11 @@ def ModResumeWithLastModSave():
             seen.add(key)
             filteredMod.append(mod)
 
-    excelFile = Workbook()
+    if len(filteredMod) == 0:
+        filteredMod.append([previousNewTitle, "", 0])
+        filteredMod.append([previousUpdateTitle, "", 1])
 
-    newModSheet = excelFile.active
-    newModSheet.title = "New Mod"
-    updateModSheet = excelFile.create_sheet(title="Update Mod")
-
-    newModSheet.append(["Title", "Link"])
-    updateModSheet.append(["Title", "Link"])
-
-    newModSheet.column_dimensions['A'].width = 250
-    newModSheet.column_dimensions['B'].width = 500
-
-    updateModSheet.column_dimensions['A'].width = 250
-    updateModSheet.column_dimensions['B'].width = 500
-
-    cells = [newModSheet["A1"], newModSheet["B1"], updateModSheet["A1"], updateModSheet["B1"],]
-
-    for cell in cells:
-        cell.font = Font(name="Calibri", size=18, bold=True, italic=False)
-        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-
-    for index, mod in enumerate(filteredMod, start=2):
-        title = mod[0]
-        link = mod[1]
-
-        if mod[2]:
-            updateModSheet[f"A{index}"] = title
-            updateModSheet[f"B{index}"] = f'=HYPERLINK({link}, {link})'
-        else:
-            newModSheet[f"A{index}"] = title
-            newModSheet[f"B{index}"] = f'=HYPERLINK({link}, {link})'
-
-    excelFile.save("KingsMod_Resume.xlsx")
+    SaveExcelFile("KingsMod_Resume.xlsx", filteredMod)
 
 
 def LastDayModResume():
@@ -149,7 +121,8 @@ def LastDayModResume():
     findLast = 0
     page = 1
 
-    dayToStop = datetime.date.today() - datetime.timedelta(days=1)
+    dayToStop = datetime.date.today() - datetime.timedelta(days=2)
+    dayToStop = dayToStop.strftime("%Y-%m-%d")
 
     # Initiate the browser
     options = Options()
@@ -203,6 +176,17 @@ def LastDayModResume():
             seen.add(key)
             filteredMod.append(mod)
 
+    SaveExcelFile("KingsMod_Day_Resume.xlsx", filteredMod)
+
+
+def SaveExcelFile(filepath, modList):
+    """
+        Function to save mod in excel file
+
+        Args:
+            - filepath : [str] : filepath to xcl file
+            - modList : table with title and link of mod: [title, link]
+    """
     excelFile = Workbook()
 
     newModSheet = excelFile.active
@@ -212,11 +196,11 @@ def LastDayModResume():
     newModSheet.append(["Title", "Link"])
     updateModSheet.append(["Title", "Link"])
 
-    newModSheet.column_dimensions['A'].width = 250
-    newModSheet.column_dimensions['B'].width = 500
+    newModSheet.column_dimensions['A'].width = 71
+    newModSheet.column_dimensions['B'].width = 142
 
-    updateModSheet.column_dimensions['A'].width = 250
-    updateModSheet.column_dimensions['B'].width = 500
+    updateModSheet.column_dimensions['A'].width = 71
+    updateModSheet.column_dimensions['B'].width = 142
 
     cells = [newModSheet["A1"], newModSheet["B1"], updateModSheet["A1"], updateModSheet["B1"], ]
 
@@ -224,20 +208,26 @@ def LastDayModResume():
         cell.font = Font(name="Calibri", size=18, bold=True, italic=False)
         cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-    for index, mod in enumerate(filteredMod, start=2):
+    newIndex = 2
+    updateIndex = 2
+
+    for mod in modList:
         title = mod[0]
         link = mod[1]
 
         if mod[2]:
-            updateModSheet[f"A{index}"] = title
-            updateModSheet[f"B{index}"] = f'=HYPERLINK({link}, {link})'
+            updateModSheet[f"A{updateIndex}"] = title
+            updateModSheet[f"B{updateIndex}"] = f'=HYPERLINK("{link}", "{link}") \n'
+            updateIndex += 1
         else:
-            newModSheet[f"A{index}"] = title
-            newModSheet[f"B{index}"] = f'=HYPERLINK({link}, {link})'
+            newModSheet[f"A{newIndex}"] = title
+            newModSheet[f"B{newIndex}"] = f'=HYPERLINK("{link}", "{link}") \n'
+            newIndex +=1
 
-    excelFile.save("KingsMod_Day_Resume.xlsx")
+    excelFile.save(filepath)
 
 
+ModResumeWithLastModSave()
 """
     To add: 
         - Faire un bot qui envoie les messages de nouveau mods et le récapitulatif
