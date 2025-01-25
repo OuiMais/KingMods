@@ -9,7 +9,7 @@
 kingMod/
 │
 ├── raspberry_pi/
-│   ├── automation.py        # Script pour automatiser la récupération des mods et l'envoi de résumés par email
+│   ├── kingMod.py        # Script pour automatiser la récupération des mods et l'envoi de résumés par email
 │   ├── requirements.txt     # Liste des dépendances pour Raspberry Pi
 │   ├── config.py            # Fichier de configuration contenant les informations d'email (à créer)
 │
@@ -28,22 +28,12 @@ kingMod/
    - `LastDayModResume()`: Extrait les mods publiés la veille.
    - `ModResumeWithLastModSave()`: Filtre et extrait les mods qui n'ont pas encore été vus par l'utilisateur.
 
-## Installation
+## Installation Raspberry Pi
 
 ### Prérequis
 
 - Python 3.7 ou supérieur
 - Pip (gestionnaire de packages Python)
-
-### Installation des dépendances
-
-Clonez le projet et installez les dépendances avec `pip` :
-
-```bash
-git clone https://votre-lien-de-repository.git
-cd kingMod
-pip install -r requirements.txt
-```
 
 ### Fichier `config.py`
 
@@ -55,7 +45,7 @@ receiver_email = "destinataire@example.com"
 password = "votre_mot_de_passe"
 ```
 
-### Dépendances
+### Dépendances 
 
 Assurez-vous d'installer les dépendances nécessaires avec :
 
@@ -65,12 +55,27 @@ pip install -r raspberry_pi/requirements.txt
 
 ## Usage
 
-### Exécuter l'automatisation des mods sur Raspberry Pi
+### Exécuter l'automatisation des mods
 
 1. Lancez le script d'automatisation pour récupérer les mods et envoyer le résumé par email.
 
 ```bash
-python raspberry_pi/automation.py
+python raspberry_pi/kingMod.py
+```
+
+## Installation 
+
+### Prérequis
+
+- Python 3.7 ou supérieur
+- Pip (gestionnaire de packages Python)
+
+### Dépendances 
+
+Assurez-vous d'installer les dépendances nécessaires avec :
+
+```bash
+pip install -r requirements.txt
 ```
 
 ### Utilisation des fonctions dans `main.py`
