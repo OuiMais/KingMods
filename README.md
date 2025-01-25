@@ -94,7 +94,7 @@ ModResumeWithLastModSave()
 
 ## Contribution
 
-Les contributions sont les bienvenues ! Si vous avez des suggestions ou des améliorations, n'hésitez pas à ouvrir une **issue** ou à soumettre une **pull request**.
+Les contributions sont les bienvenues ! Si vous avez des suggestions ou des améliorations, n'hésitez pas à ouvrir une **issue**.
 
 ## Licence
 
