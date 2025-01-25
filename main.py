@@ -121,7 +121,8 @@ def LastDayModResume():
     findLast = 0
     page = 1
 
-    dayToStop = datetime.date.today() - datetime.timedelta(days=2)
+    today = datetime.date.today()
+    dayToStop = today - datetime.timedelta(days=2)
     dayToStop = dayToStop.strftime("%Y-%m-%d")
 
     # Initiate the browser
@@ -176,7 +177,8 @@ def LastDayModResume():
             seen.add(key)
             filteredMod.append(mod)
 
-    SaveExcelFile("KingsMod_Day_Resume.xlsx", filteredMod)
+    filepath = "KingMod_Resume_" + today.strftime("%Y-%m-%d") + ".xlsx"
+    SaveExcelFile(filepath, filteredMod)
 
 
 def SaveExcelFile(filepath, modList):
@@ -228,8 +230,3 @@ def SaveExcelFile(filepath, modList):
 
 
 ModResumeWithLastModSave()
-"""
-    To add: 
-        - Faire un bot qui envoie les messages de nouveau mods et le récapitulatif
-        - 
-"""
