@@ -84,7 +84,8 @@ while not findLast:
         link = mod.get_attribute("href")
 
         if modDay != dayToStop:
-            pageModArray.append([title, link, updateMod])
+            if modDay != today.strftime("%Y-%m-%d"):
+                pageModArray.append([title, link, updateMod])
         else:
             modTitleAndLink += pageModArray
             findLast = 1
@@ -113,7 +114,8 @@ for mod in modTitleAndLink:
 #                 Save in xlsx
 # ####################################################
 # Prepare file
-filepath = "KingMod_Resume_" + today.strftime("%Y_%m_%d") + ".xlsx"
+dateOfFile = today - datetime.timedelta(days=1)
+filepath = "KingMod_Resume_" + dateOfFile.strftime("%Y_%m_%d") + ".xlsx"
 
 excelFile = Workbook()
 
@@ -167,7 +169,7 @@ password = config.password
 message = MIMEMultipart()
 message["From"] = sender_email
 message["To"] = recipient_email
-message["Subject"] = "KingMod_Day_" + today.strftime("%Y_%m_%d")
+message["Subject"] = "KingMod_Day_" + dateOfFile.strftime("%Y_%m_%d")
 
 text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 1) + " nouveaux mods et " + str(updateIndex - 1) +
         " mods mis à jour.")
