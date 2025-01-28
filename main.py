@@ -1,7 +1,7 @@
 """
     Projet : KingMods
     Date Creation : 07/08/2023
-    Date Revision : 13/01/2025
+    Date Revision : 28/01/2025
     Entreprise : 3SC4P3
     Auteur: Florian HOFBAUER
     Contact :
@@ -19,6 +19,24 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 
 import os
+
+import json
+import time
+
+# Fichiers pour stocker les données
+ALL_MODS = "all_mods.json"
+
+if not os.path.exists(ALL_MODS):
+    with open(ALL_MODS, "w") as f:
+        json.dump([], f)
+
+def load_data(json_filepath):
+    with open(json_filepath, "r") as jsonFile:
+        return json.load(jsonFile)
+
+def save_data(json_filepath, data):
+    with open(json_filepath, "w") as jsonFile:
+        json.dump(data, jsonFile, indent=4)
 
 
 def ModResumeWithLastModSave():
@@ -229,4 +247,72 @@ def SaveExcelFile(filepath, modList):
     excelFile.save(filepath)
 
 
-ModResumeWithLastModSave()
+# ModResumeWithLastModSave()
+
+previousNewTitle = "Terraform et peinture gratuits"
+
+url = "https://www.kingmods.net/fr/fs25/nouveaux-mods"
+
+modTitleAndLink = []
+pageModArray = []
+
+findPrevious = 0
+page = 1
+
+# Initiate the browser
+options = Options()
+options.add_argument('--headless')
+browser = webdriver.Chrome(options=options)
+
+# Open website
+browser.get(url)
+
+while not findPrevious:
+    # Save ul data
+    pageModList = browser.find_element(By.XPATH, "//ul[@class='w-full grid gap-20 grid-cols-2']")
+
+    lastPageMod = pageModList.find_elements(By.TAG_NAME, 'a')
+
+    for mod in lastPageMod:
+        try:
+            # Check if badge update is display
+            badge = mod.find_element(By.XPATH, ".//div[contains(@class, 'bg-blue')]")
+            updateMod = badge.is_displayed()
+        except NoSuchElementException:
+            updateMod = False
+
+        title = mod.get_attribute("title")
+        link = mod.get_attribute("href")
+
+        if title != previousNewTitle:
+            pageModArray.append([title, link, updateMod])
+        else:
+            modTitleAndLink += pageModArray
+            findPrevious = 1
+            break
+
+    page += 1
+    url = "https://www.kingmods.net/fr/fs25/nouveaux-mods?page=" + str(page)
+    time.sleep(4)
+    print(page)
+    browser.get(url)
+
+browser.close()
+
+filteredMod = []
+seen = set()
+
+for mod in modTitleAndLink:
+    key = (mod[0], mod[1])
+    if key not in seen:
+        seen.add(key)
+        filteredMod.append(mod)
+
+data = load_data(ALL_MODS)
+
+for mod in filteredMod:
+    title = mod[0]
+    link = mod[1]
+    data.append({"title": title, "link": link, "toUpdate": 0})
+
+save_data(ALL_MODS, data)
