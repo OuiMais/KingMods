@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Liste des Mods Téléchargés</h1>
+
+<table>
+    <tbody>
+        {% for mod in objects %}
+            <tr>
+                <td>
+                    <a href="{{ mod.link }}" target="_blank">
+                        <strong>{{ mod.title }}</strong>
+                    </a>
+                </td>
+                <td>
+                    {% if mod.toUpdate %}
+                        <form action="/update_mod" method="post" style="display: inline;"
+                              onsubmit="window.open('{{ mod.link }}', '_blank').focus();">
+                            <input type="hidden" name="link" value="{{ mod.link }}">
+                            <button type="submit" style="background-color: green;">Mettre à jour</button>
+                        </form>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="/delete_mod" method="post" style="display:inline;"
+                              onsubmit="return confirmDelete('{{ mod.title }}')">
+                        <input type="hidden" name="link" value="{{ mod.link }}">
+                        <button type="submit" style="background-color: red;">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function confirmDelete(title) {
+        return confirm(`Voulez-vous vraiment supprimer le mod : ${title} ?`);
+    }
+</script>
+
+{% endblock %}

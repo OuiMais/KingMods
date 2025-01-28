@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Liste des Nouveaux Mods</h1>
+<table>
+    <tbody>
+        {% for mod in objects %}
+            <tr>
+                <td>
+                    <a href="{{ mod.link }}" target="_blank">
+                        <strong>{{ mod.title }}</strong>
+                    </a>
+                </td>
+                <td>
+                    <form action="/add" method="post" style="display:inline;">
+                        <input type="hidden" name="link" value="{{ mod.link }}">
+                        <button type="submit">Ajouter aux téléchargés</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
