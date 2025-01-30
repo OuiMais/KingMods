@@ -11,8 +11,8 @@ import json
 import os
 
 # Fichiers pour stocker les données
-DOWNLOADED_MODS_JSON_FILE = "download_mods.json"
-NEW_MODS_JSON_FILE = "new_mods.json"
+DOWNLOADED_MODS_JSON_FILE = "/home/PyServer/Desktop/KingMod/download_mods.json"
+NEW_MODS_JSON_FILE = "/home/PyServer/Desktop/KingMod/new_mods.json"
 
 # Initialiser les fichiers si besoin
 for file in [DOWNLOADED_MODS_JSON_FILE, NEW_MODS_JSON_FILE]:
@@ -21,9 +21,12 @@ for file in [DOWNLOADED_MODS_JSON_FILE, NEW_MODS_JSON_FILE]:
             json.dump([], f)
 
 def load_data(json_filepath):
-    with open(json_filepath, "r") as jsonFile:
-        return json.load(jsonFile)
+    jsonFile = open(json_filepath, "r+")
+    value = json.load(jsonFile)
+    jsonFile.close()
+    return value
 
 def save_data(json_filepath, data):
-    with open(json_filepath, "w") as jsonFile:
-        json.dump(data, jsonFile, indent=4)
+    jsonFile = open(json_filepath, "w")
+    json.dump(data, jsonFile, indent=4)
+    jsonFile.close()

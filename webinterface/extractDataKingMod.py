@@ -27,6 +27,7 @@ from email import encoders
 import os
 import config, configJson
 
+
 # ####################################################
 #                      Variables
 # ####################################################
@@ -54,7 +55,7 @@ path = '/usr/bin/chromedriver'
 service = Service(executable_path=path)
 
 # Initiate the browser
-browser = webdriver.Chrome(service=service, options=options)
+browser = webdriver.Chrome(service=service, options=options) # service=service,
 
 # Open website
 browser.get(url)
@@ -145,8 +146,7 @@ youHaveToUpdate = 0
 
 downloadModsData = configJson.load_data(configJson.DOWNLOADED_MODS_JSON_FILE)
 
-configJson.save_data(configJson.NEW_MODS_JSON_FILE, [])
-newModsData = configJson.load_data(configJson.NEW_MODS_JSON_FILE)
+newModsData = []
 
 for mod in filteredMod:
     title = mod[0]
@@ -193,7 +193,7 @@ message["From"] = sender_email
 message["To"] = recipient_email
 message["Subject"] = "KingMod_Day_" + dateOfFile.strftime("%Y_%m_%d")
 
-text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 1) + " nouveaux mods et " + str(updateIndex - 1) +
+text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 2) + " nouveaux mods et " + str(updateIndex - 2) +
         " mods mis à jour.\n\nVous avez " + str(youHaveToUpdate) + " mods to update.")
 message.attach(MIMEText(text, "plain"))
 
