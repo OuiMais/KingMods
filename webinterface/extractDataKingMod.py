@@ -155,7 +155,6 @@ for mod in filteredMod:
     if mod[2]:
         updateModSheet[f"A{updateIndex}"] = title
         updateModSheet[f"B{updateIndex}"] = f'=HYPERLINK("{link}", "{link}") \n'
-        updateIndex += 1
 
         for modDl in downloadModsData:
             if modDl["link"] == link:
@@ -166,6 +165,7 @@ for mod in filteredMod:
                 youHaveToUpdate += 1
                 modDl["toUpdate"] = 1
                 break
+        updateIndex += 1
 
     else:
         newModSheet[f"A{newIndex}"] = title
