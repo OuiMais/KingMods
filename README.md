@@ -13,6 +13,8 @@ kingMod/
 │   ├── requirements.txt     # Liste des dépendances pour Raspberry Pi
 │   ├── config.py            # Fichier de configuration contenant les informations d'email (à créer)
 │
+├── webinterface # Ajout d'un script Flask pour gérer les mods sur une interface minimaliste
+│
 ├── main.py                  # Fichier principal avec les fonctions
 │
 └── requirements.txt         # Liste des dépendances pour l'ensemble du projet
