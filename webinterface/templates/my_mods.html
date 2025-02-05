@@ -8,6 +8,7 @@
     <tbody>
         {% for mod in objects %}
             <tr>
+                <td></td>
                 <td>
                     <a href="{{ mod.link }}" target="_blank">
                         <strong>{{ mod.title }}</strong>
@@ -38,6 +39,13 @@
     function confirmDelete(title) {
         return confirm(`Voulez-vous vraiment supprimer le mod : ${title} ?`);
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let rows = document.querySelectorAll("tbody tr");
+        rows.forEach((row, index) => {
+            row.querySelector("td:first-child").textContent = index + 1;
+        });
+    });
 </script>
 
 {% endblock %}
