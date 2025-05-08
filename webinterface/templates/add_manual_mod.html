@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Ajouter un Nouveau Mod</h1>
+
+<form action="/add_manual_mod" method="POST">
+<label for="mod_name">Nom du mod :</label>
+<input type="text" id="mod_name" name="mod_name" required>
+
+<label for="mod_link">Lien du mod :</label>
+<input type="url" id="mod_link" name="mod_link" required>
+
+<button type="submit">Ajouter</button>
+</form>
+
+{% endblock %}

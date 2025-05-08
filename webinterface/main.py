@@ -1,7 +1,7 @@
 """
     Projet : KingMods/webinterface
     Date Creation : 28/01/2025
-    Date Revision : 28/01/2025
+    Date Revision : 08/05/2025
     Entreprise : 3SC4P3
     Auteur: Florian HOFBAUER
     Contact :
@@ -21,6 +21,19 @@ def home():
 def downloaded():
     download_mods_data = configJson.load_data(configJson.DOWNLOADED_MODS_JSON_FILE)
     return render_template("my_mods.html", objects=download_mods_data)
+
+@app.route("/add_manual_mod", methods=["GET", "POST"])
+def add_mod():
+    if request.method == "POST":
+        name = request.form["mod_name"]
+        link = request.form["mod_link"]
+
+        download_mods_data = configJson.load_data(configJson.DOWNLOADED_MODS_JSON_FILE)
+        download_mods_data.append({"title": name, "link": link, "toUpdate": 0})
+        configJson.save_data(configJson.DOWNLOADED_MODS_JSON_FILE, download_mods_data)
+
+        return redirect("/my_mods")  # ou autre route
+    return render_template("add_manual_mod.html")
 
 @app.route("/add", methods=["POST"])
 def add_downloaded():
@@ -70,4 +83,4 @@ def update_mod():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
