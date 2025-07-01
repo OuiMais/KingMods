@@ -1,7 +1,7 @@
 """
     Projet : KingMods
     Date Creation : 07/08/2023
-    Date Revision : 25/01/2025
+    Date Revision : 01/07/2025
     Entreprise : 3SC4P3
     Auteur: Florian HOFBAUER
     Contact :
@@ -39,8 +39,8 @@ findLast = 0
 page = 1
 
 today = datetime.date.today()
-dayToStop = today - datetime.timedelta(days=2)
-dayToStop = dayToStop.strftime("%Y-%m-%d")
+dayToStopDate = today - datetime.timedelta(days=2)
+dayToStop = dayToStopDate.strftime("%Y-%m-%d")
 
 # ####################################################
 #                 Initiate the browser
@@ -79,13 +79,13 @@ while not findLast:
         timeMod = mod.find_element(By.TAG_NAME, "time")
         dateTimeMod = timeMod.get_attribute("datetime")
         modDay = dateTimeMod.split("T")[0]
+        modDayDate = datetime.datetime.strptime(modDay, "%Y-%m-%d").date()
 
         title = mod.get_attribute("title")
         link = mod.get_attribute("href")
 
-        if modDay != dayToStop:
-            if modDay != today.strftime("%Y-%m-%d"):
-                pageModArray.append([title, link, updateMod])
+        if modDayDate > dayToStopDate:
+            pageModArray.append([title, link, updateMod])
         else:
             modTitleAndLink += pageModArray
             findLast = 1
