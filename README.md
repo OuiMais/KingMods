@@ -62,7 +62,7 @@ pip install -r raspberry_pi/requirements.txt
 1. Lancez le script d'automatisation pour récupérer les mods et envoyer le résumé par email.
 
 ```bash
-python raspberry_pi/kingMod.py
+python raspberry_pi/extractDataKingModextractDataKingMod.py
 ```
 
 ## Installation 
