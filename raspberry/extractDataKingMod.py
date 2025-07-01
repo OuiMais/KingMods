@@ -16,7 +16,7 @@ from selenium.common.exceptions import NoSuchElementException
 import datetime
 
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Font, Alignment, PatternFill
 
 import smtplib
 from email.mime.text import MIMEText
@@ -25,7 +25,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 
 import os
-import config
+import config, configJson
 
 # ####################################################
 #                      Variables
@@ -141,6 +141,11 @@ for cell in cells:
 # Inject data mods
 newIndex = 2
 updateIndex = 2
+youHaveToUpdate = 0
+
+downloadModsData = configJson.load_data(configJson.DOWNLOADED_MODS_JSON_FILE)
+
+newModsData = []
 
 for mod in filteredMod:
     title = mod[0]
@@ -149,11 +154,27 @@ for mod in filteredMod:
     if mod[2]:
         updateModSheet[f"A{updateIndex}"] = title
         updateModSheet[f"B{updateIndex}"] = f'=HYPERLINK("{link}", "{link}") \n'
+
+        for modDl in downloadModsData:
+            if modDl["link"] == link:
+                updateModSheet[f"A{updateIndex}"].fill = PatternFill(start_color='FFD970', end_color='FFD970',
+                                                                     fill_type="solid")
+                updateModSheet[f"B{updateIndex}"].fill = PatternFill(start_color='FFD970', end_color='FFD970',
+                                                                     fill_type="solid")
+                youHaveToUpdate += 1
+                modDl["toUpdate"] = 1
+                break
         updateIndex += 1
+
     else:
         newModSheet[f"A{newIndex}"] = title
         newModSheet[f"B{newIndex}"] = f'=HYPERLINK("{link}", "{link}") \n'
         newIndex +=1
+
+        newModsData.append({"title": title, "link": link})
+
+configJson.save_data(configJson.DOWNLOADED_MODS_JSON_FILE, downloadModsData)
+configJson.save_data(configJson.NEW_MODS_JSON_FILE, newModsData)
 
 excelFile.save(filepath)
 excelFile.close()
@@ -171,8 +192,8 @@ message["From"] = sender_email
 message["To"] = recipient_email
 message["Subject"] = "KingMod_Day_" + dateOfFile.strftime("%Y_%m_%d")
 
-text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 1) + " nouveaux mods et " + str(updateIndex - 1) +
-        " mods mis à jour.")
+text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 2) + " nouveaux mods et " + str(updateIndex - 2) +
+        " mods mis à jour.\n\nVous avez " + str(youHaveToUpdate) + " mods to update.")
 message.attach(MIMEText(text, "plain"))
 
 # Ajout du fichier en pièce jointe
