@@ -8,10 +8,11 @@
 ```
 kingMod/
 │
-├── raspberry_pi/
-│   ├── kingMod.py        # Script pour automatiser la récupération des mods et l'envoi de résumés par email
+├── PC/
+│   ├── extractDataKingMod.py        # Script pour automatiser la récupération des mods et l'envoi de résumés par email
 │   ├── requirements.txt     # Liste des dépendances pour Raspberry Pi
 │   ├── config.py            # Fichier de configuration contenant les informations d'email (à créer)
+│   ├── configJson.py            # Fichier de configuration contenant les informations d'enregistrement
 │
 ├── webinterface # Ajout d'un script Flask pour gérer les mods sur une interface minimaliste
 │
