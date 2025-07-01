@@ -51,11 +51,11 @@ options.add_argument('--headless')
 options.add_argument("-disable-gpu")
 options.add_argument("--disable-popup-blocking")
 
-# path = '/usr/bin/chromedriver'
-# service = Service(executable_path=path)
+path = '/usr/bin/chromedriver'
+service = Service(executable_path=path)
 
 # Initiate the browser
-browser = webdriver.Chrome(options=options) # service=service,
+browser = webdriver.Chrome(service=service,options=options) #
 
 # Open website
 browser.get(url)
@@ -87,9 +87,6 @@ while not findLast:
 
         if modDayDate > dayToStopDate:
             pageModArray.append([title, link, updateMod])
-        # if modDay != dayToStop:
-        #     if modDay != today.strftime("%Y-%m-%d"):
-        #         pageModArray.append([title, link, updateMod])
         else:
             modTitleAndLink += pageModArray
             findLast = 1

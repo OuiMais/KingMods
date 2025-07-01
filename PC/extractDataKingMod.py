@@ -9,7 +9,6 @@
 """
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
@@ -50,11 +49,8 @@ options.add_argument('--headless')
 options.add_argument("-disable-gpu")
 options.add_argument("--disable-popup-blocking")
 
-path = '/usr/bin/chromedriver'
-service = Service(executable_path=path)
-
 # Initiate the browser
-browser = webdriver.Chrome(service=service, options=options)
+browser = webdriver.Chrome(options=options)
 
 # Open website
 browser.get(url)
