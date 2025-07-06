@@ -2,6 +2,10 @@
 
 {% block content %}
 
+{% if modsToUpdate != 0 %}
+    <h1>Vous avez des mods à mettre à jour</h1>
+{% endif %}
+
 <h1>Liste des Nouveaux Mods</h1>
 <table>
     <tbody>

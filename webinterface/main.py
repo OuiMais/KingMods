@@ -15,7 +15,14 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     new_mods_data = configJson.load_data(configJson.NEW_MODS_JSON_FILE)
-    return render_template("home.html", objects=new_mods_data)
+    download_mods_data = configJson.load_data(configJson.DOWNLOADED_MODS_JSON_FILE)
+
+    modsToUpdate = 0
+    for mod in download_mods_data:
+        if mod['toUpdate'] == 1:
+            modsToUpdate += 1
+
+    return render_template("home.html", objects=new_mods_data, modsToUpdate=modsToUpdate)
 
 @app.route("/my_mods")
 def downloaded():
@@ -44,7 +51,7 @@ def add_downloaded():
     # Trouver l'objet dans les nouveaux mods
     for mod in new_mods_data:
         if mod["link"] == link:
-            download_mods_data.append(mod)
+            download_mods_data.append({"title": mod["title"], "link": mod["link"], "toUpdate": 0})
             new_mods_data.remove(mod)
             break
 
