@@ -1,12 +1,15 @@
 """
     Projet : KingMods
     Date Creation : 07/08/2023
-    Date Revision : 01/07/2025
+    Date Revision : 02/08/2025
     Entreprise : 3SC4P3
     Auteur: Florian HOFBAUER
     Contact :
     But : Extrait tous les mods de la veille publiés sur le site kingmods
 """
+import functools
+import time
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -28,6 +31,54 @@ import os
 import config, configJson
 
 
+# Retry decorator
+def retry_on_exception(max_retries=3, delay=5, exceptions=(Exception,), task_name=""):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    print(f"[{task_name}] ERREUR (tentative {attempt}/{max_retries}): {e}")
+                    if attempt < max_retries:
+                        time.sleep(delay)
+                    else:
+                        print(f"[{task_name}] ÉCHEC APRÈS {max_retries} TENTATIVES.")
+        return wrapper
+    return decorator
+
+@retry_on_exception(task_name="LANCEMENT BROWSER")
+def launchBrowser():
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument("-disable-gpu")
+    options.add_argument("--disable-popup-blocking")
+
+    path = '/usr/bin/chromedriver'
+    service = Service(executable_path=path)
+    browser = webdriver.Chrome(service=service, options=options)
+    return browser
+
+@retry_on_exception(task_name="CHARGEMENT PAGE")
+def loadPage(browser, page_url):
+    browser.get(page_url)
+    return browser.find_element(By.XPATH, "//ul[@class='w-full grid gap-20 grid-cols-2']").find_elements(By.TAG_NAME, 'a')
+
+@retry_on_exception(task_name="ENVOI EMAIL")
+def sendMail(filepath, sender_email, recipient_email, password, message):
+    with open(filepath, "rb") as file:
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(file.read())
+        encoders.encode_base64(part)
+        part.add_header("Content-Disposition", f"attachment; filename={filepath.split('/')[-1]}")
+        message.attach(part)
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, recipient_email, message.as_string())
+
 # ####################################################
 #                      Variables
 # ####################################################
@@ -46,16 +97,9 @@ dayToStop = dayToStopDate.strftime("%Y-%m-%d")
 # ####################################################
 #                 Initiate the browser
 # ####################################################
-options = Options()
-options.add_argument('--headless')
-options.add_argument("-disable-gpu")
-options.add_argument("--disable-popup-blocking")
-
-path = '/usr/bin/chromedriver'
-service = Service(executable_path=path)
 
 # Initiate the browser
-browser = webdriver.Chrome(service=service,options=options) #
+browser = launchBrowser()
 
 # Open website
 browser.get(url)
@@ -65,9 +109,7 @@ browser.get(url)
 # ####################################################
 while not findLast:
     # Save ul data
-    pageModList = browser.find_element(By.XPATH, "//ul[@class='w-full grid gap-20 grid-cols-2']")
-
-    lastPageMod = pageModList.find_elements(By.TAG_NAME, 'a')
+    lastPageMod = loadPage(browser, url)
 
     for mod in lastPageMod:
         try:
@@ -197,22 +239,10 @@ text = ("Bonjour,\n\nAujourd'hui, il y a eu " + str(newIndex - 2) + " nouveaux m
         " mods mis à jour.\n\nVous avez " + str(youHaveToUpdate) + " mods to update.")
 message.attach(MIMEText(text, "plain"))
 
-# Ajout du fichier en pièce jointe
-with open(filepath, "rb") as file:
-    part = MIMEBase("application", "octet-stream")
-    part.set_payload(file.read())
-    encoders.encode_base64(part)
-    part.add_header(
-        "Content-Disposition",
-        f"attachment; filename={filepath.split('/')[-1]}",
-    )
-    message.attach(part)
+sendMail(filepath, sender_email, recipient_email, password, message)
 
-# Connexion au serveur SMTP
-with smtplib.SMTP("smtp.gmail.com", 587) as server:
-    server.starttls()
-    server.login(sender_email, password)
-    server.sendmail(sender_email, recipient_email, message.as_string())
-
-if os.path.exists(filepath):
-    os.remove(filepath)
+try:
+    if os.path.exists(filepath):
+        os.remove(filepath)
+except Exception as e:
+    print(f"[ERREUR SUPPRESSION FICHIER] : {e}")
